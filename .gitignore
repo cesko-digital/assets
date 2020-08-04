@@ -1,0 +1,9 @@
+# General
+.DS_Store
+.idea
+
+# Terraform
+variables.tf
+terraform.tfstate
+terraform.tfstate.backup
+.terraform
