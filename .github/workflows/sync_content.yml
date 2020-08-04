@@ -1,0 +1,36 @@
+name: Sync content
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'content/**'
+
+jobs:
+  sync_content:
+    name: Sync Content
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --acl private --follow-symlinks --delete
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_S3_BUCKET: cesko-digital-assets
+          AWS_REGION: 'eu-central-1'
+          SOURCE_DIR: 'content'
+  invalidate_cache:
+    name: Invalidate Cache
+    needs: sync_content
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: awact/cloudfront-action@master
+        env:
+          AWS_REGION: 'eu-central-1'
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          DISTRIBUTION_ID: ${{ secrets.DISTRIBUTION_ID }}
