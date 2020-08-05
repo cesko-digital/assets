@@ -60,3 +60,6 @@ Veškeré změny infrastruktury by měly probíhat odděleně od změn obsahu. T
 
 Konfigurace AWS a zdroje pro synchronizaci jsou zveřejněny pod [licencí MIT](https://github.com/cesko-digital/assets/blob/master/LICENSE). Na obsah ve složce `content` se může vztahovat jiná licence.   
 
+## Kontakty
+
+**Tech leads:** [Matěj 'Horm' Horák](https://github.com/HormCodes), [Martin Wenish](https://github.com/martinwenisch)
