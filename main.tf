@@ -28,9 +28,15 @@ resource "aws_s3_bucket" "bucket" {
   bucket = "cesko-digital-assets"
   acl = "private"
 }
+resource "aws_s3_bucket" "automated_bucket" {
+  bucket = "cesko-digital-assets-automated"
+  acl = "private"
+}
 
 locals {
   origin_id = "S3-${aws_s3_bucket.bucket.id}"
+  automated_origin_id = "S3-${aws_s3_bucket.automated_bucket.id}"
+  group_origin_id = "S3-cesko-digital-all-assets"
 }
 
 resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
@@ -46,7 +52,22 @@ data "aws_iam_policy_document" "distribution_policy" {
         aws_cloudfront_origin_access_identity.origin_access_identity.iam_arn]
     }
     resources = [
-      "${aws_s3_bucket.bucket.arn}/*"]
+      "${aws_s3_bucket.bucket.arn}/*",
+    ]
+  }
+}
+data "aws_iam_policy_document" "automated_distribution_policy" {
+  statement {
+    actions = [
+      "s3:GetObject"]
+    principals {
+      type = "AWS"
+      identifiers = [
+        aws_cloudfront_origin_access_identity.origin_access_identity.iam_arn]
+    }
+    resources = [
+      "${aws_s3_bucket.automated_bucket.arn}/*",
+    ]
   }
 }
 
@@ -55,13 +76,47 @@ resource "aws_s3_bucket_policy" "web_distribution" {
   policy = data.aws_iam_policy_document.distribution_policy.json
 }
 
+resource "aws_s3_bucket_policy" "web_distribution_automated" {
+  bucket = aws_s3_bucket.automated_bucket.id
+  policy = data.aws_iam_policy_document.automated_distribution_policy.json
+}
+
 resource "aws_cloudfront_distribution" "s3_distribution" {
+  origin_group {
+    origin_id = local.group_origin_id
+
+    failover_criteria {
+      status_codes = [
+        403,
+        404,
+        500,
+        502]
+    }
+
+    member {
+      origin_id = local.origin_id
+    }
+
+    member {
+      origin_id = local.automated_origin_id
+    }
+  }
+
   origin {
     domain_name = aws_s3_bucket.bucket.bucket_regional_domain_name
     origin_id = local.origin_id
 
     s3_origin_config {
 
+      origin_access_identity = aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path
+    }
+  }
+
+  origin {
+    domain_name = aws_s3_bucket.automated_bucket.bucket_regional_domain_name
+    origin_id = local.automated_origin_id
+
+    s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path
     }
   }
@@ -79,7 +134,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     cached_methods = [
       "GET",
       "HEAD"]
-    target_origin_id = local.origin_id
+    target_origin_id = local.group_origin_id
 
     forwarded_values {
       query_string = false
