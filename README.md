@@ -12,7 +12,13 @@ Pro přidání nového souboru na [data.cesko.digital](https://data.cesko.digita
 4. Vytvořit pull request a provést kontrolu (pull request by měl obsahovat změny pouze ve složce `content`, viz sekce _Změna infrastruktury_)
 5. Merge
 
-Cesta k souboru kopíruje strukturu repozitáře, tedy soubor `content/prirucka.pdf` bude k dispozici na adrese `data.cesko.digital/prirucka.pdf`. 
+Cesta k souboru kopíruje strukturu repozitáře, tedy soubor `content/prirucka.pdf` bude k dispozici na adrese `data.cesko.digital/prirucka.pdf`.
+
+## Automatizovaná data
+
+Součástí definice infrastruktury je i bucket pro automatizovaná data jako je např. [derisking-handbook](https://github.com/cesko-digital/derisking-handbook).
+
+Nahrávání do tohoto bucketu je řešeno odděleně, ale požadavek je přesměrován na tento "automatizovaný bucket" pokud soubor není nalezen v primárním bucketu.  
 
 ## Setup nové instance
 
