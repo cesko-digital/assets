@@ -25,9 +25,7 @@ resource "aws_s3_bucket" "bucket" {
 }
 resource "aws_s3_bucket" "automated_bucket" {
   bucket = "data-cesko-digital"
-
-  // TODO: change to private once distribution is fully switched.
-  acl = "public-read"
+  acl = "private"
 
   cors_rule {
     allowed_headers = [
