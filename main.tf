@@ -11,26 +11,36 @@ provider "aws" {
   region = "eu-central-1"
 }
 
-resource "aws_s3_bucket" "infrastructure_bucket" {
-  bucket = "cd-assets-infrastructure"
-  acl = "private"
-}
-
 terraform {
   backend "s3" {
-    bucket = "cd-assets-infrastructure"
+    bucket = "cd-assets-terraform-backend"
     key = "terraform.tfstate"
     region = "eu-central-1"
   }
 }
 
 resource "aws_s3_bucket" "bucket" {
-  bucket = "cesko-digital-assets"
+  bucket = "data-cesko-digital-manual"
   acl = "private"
 }
 resource "aws_s3_bucket" "automated_bucket" {
-  bucket = "cesko-digital-assets-automated"
-  acl = "private"
+  bucket = "data-cesko-digital"
+
+  // TODO: change to private once distribution is fully switched.
+  acl = "public-read"
+
+  cors_rule {
+    allowed_headers = [
+      "Authorization"]
+    allowed_methods = [
+      "GET",
+      "HEAD"]
+    allowed_origins = [
+      "*"]
+    expose_headers = []
+    max_age_seconds = 3000
+  }
+
 }
 
 locals {
@@ -56,6 +66,7 @@ data "aws_iam_policy_document" "distribution_policy" {
     ]
   }
 }
+
 data "aws_iam_policy_document" "automated_distribution_policy" {
   statement {
     actions = [
@@ -63,7 +74,8 @@ data "aws_iam_policy_document" "automated_distribution_policy" {
     principals {
       type = "AWS"
       identifiers = [
-        aws_cloudfront_origin_access_identity.origin_access_identity.iam_arn]
+        aws_cloudfront_origin_access_identity.origin_access_identity.iam_arn
+      ]
     }
     resources = [
       "${aws_s3_bucket.automated_bucket.arn}/*",
@@ -151,7 +163,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   }
 
 
-  price_class = "PriceClass_200"
+  price_class = "PriceClass_100"
 
   restrictions {
     geo_restriction {
