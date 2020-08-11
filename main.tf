@@ -14,18 +14,14 @@ provider "aws" {
 terraform {
   backend "s3" {
     bucket = "cd-assets-terraform-backend"
-    key = "terraform.tfstate"
+    key    = "terraform.tfstate"
     region = "eu-central-1"
   }
 }
 
 resource "aws_s3_bucket" "bucket" {
   bucket = "data-cesko-digital-manual"
-  acl = "private"
-}
-resource "aws_s3_bucket" "automated_bucket" {
-  bucket = "data-cesko-digital"
-  acl = "private"
+  acl    = "private"
 
   cors_rule {
     allowed_headers = [
@@ -35,16 +31,32 @@ resource "aws_s3_bucket" "automated_bucket" {
       "HEAD"]
     allowed_origins = [
       "*"]
-    expose_headers = []
+    expose_headers  = []
     max_age_seconds = 3000
   }
+}
 
+resource "aws_s3_bucket" "automated_bucket" {
+  bucket = "data-cesko-digital"
+  acl    = "private"
+
+  cors_rule {
+    allowed_headers = [
+      "Authorization"]
+    allowed_methods = [
+      "GET",
+      "HEAD"]
+    allowed_origins = [
+      "*"]
+    expose_headers  = []
+    max_age_seconds = 3000
+  }
 }
 
 locals {
-  origin_id = "S3-${aws_s3_bucket.bucket.id}"
+  origin_id           = "S3-${aws_s3_bucket.bucket.id}"
   automated_origin_id = "S3-${aws_s3_bucket.automated_bucket.id}"
-  group_origin_id = "S3-cesko-digital-all-assets"
+  group_origin_id     = "S3-cesko-digital-all-assets"
 }
 
 resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
@@ -52,10 +64,10 @@ resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
 
 data "aws_iam_policy_document" "distribution_policy" {
   statement {
-    actions = [
+    actions   = [
       "s3:GetObject"]
     principals {
-      type = "AWS"
+      type        = "AWS"
       identifiers = [
         aws_cloudfront_origin_access_identity.origin_access_identity.iam_arn]
     }
@@ -67,10 +79,10 @@ data "aws_iam_policy_document" "distribution_policy" {
 
 data "aws_iam_policy_document" "automated_distribution_policy" {
   statement {
-    actions = [
+    actions   = [
       "s3:GetObject"]
     principals {
-      type = "AWS"
+      type        = "AWS"
       identifiers = [
         aws_cloudfront_origin_access_identity.origin_access_identity.iam_arn
       ]
@@ -114,7 +126,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
 
   origin {
     domain_name = aws_s3_bucket.bucket.bucket_regional_domain_name
-    origin_id = local.origin_id
+    origin_id   = local.origin_id
 
     s3_origin_config {
 
@@ -124,24 +136,24 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
 
   origin {
     domain_name = aws_s3_bucket.automated_bucket.bucket_regional_domain_name
-    origin_id = local.automated_origin_id
+    origin_id   = local.automated_origin_id
 
     s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path
     }
   }
 
-  enabled = true
+  enabled         = true
   is_ipv6_enabled = true
 
   aliases = [
     var.domain]
 
   default_cache_behavior {
-    allowed_methods = [
+    allowed_methods  = [
       "GET",
       "HEAD"]
-    cached_methods = [
+    cached_methods   = [
       "GET",
       "HEAD"]
     target_origin_id = local.group_origin_id
@@ -155,9 +167,9 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     }
 
     viewer_protocol_policy = "redirect-to-https"
-    min_ttl = 0
-    default_ttl = 3600
-    max_ttl = 86400
+    min_ttl                = 0
+    default_ttl            = 3600
+    max_ttl                = 86400
   }
 
 
@@ -171,6 +183,6 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
 
   viewer_certificate {
     acm_certificate_arn = var.ssl_certificate_arn
-    ssl_support_method = "sni-only"
+    ssl_support_method  = "sni-only"
   }
 }
