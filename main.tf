@@ -190,6 +190,6 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     error_code = 403
     error_caching_min_ttl = 10
     response_page_path = "/index.html"
-    response_code = 403
+    response_code = 302
   }
 }
