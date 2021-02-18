@@ -2,6 +2,7 @@ variable domain {
   type = string
 }
 
+
 variable "ssl_certificate_arn" {
   type = string
 }
