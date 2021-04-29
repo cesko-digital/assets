@@ -68,4 +68,4 @@ Konfigurace AWS a zdroje pro synchronizaci jsou zveřejněny pod [licencí MIT](
 
 ## Kontakty
 
-**Tech leads:** [Matěj 'Horm' Horák](https://github.com/HormCodes), [Martin Wenish](https://github.com/martinwenisch)
+**Tech leads:** [Matěj 'Horm' Horák](https://github.com/HormCodes), [Martin Wenisch](https://github.com/martinwenisch)
