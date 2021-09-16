@@ -58,6 +58,7 @@ locals {
   origin_id           = "S3-${aws_s3_bucket.bucket.id}"
   automated_origin_id = "S3-${aws_s3_bucket.automated_bucket.id}"
   group_origin_id     = "S3-cesko-digital-all-assets"
+  resize_function_origin_id = "cesko-digital-resized-assets"
 }
 
 resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
@@ -126,6 +127,24 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   }
 
   origin {
+    origin_id = local.resize_function_origin_id
+    domain_name = "https://cesko.digital"
+    origin_path = '/api/resize'
+
+    custom_origin_config {
+      http_port = 80
+      https_port = 443
+      origin_protocol_policy = "match-viewer"
+      origin_ssl_protocols = [
+        "TLSv1",
+        "TLSv1.1",
+        "TLSv1.2",
+        "SSLv3"
+      ]
+    }
+  }
+
+  origin {
     domain_name = aws_s3_bucket.bucket.bucket_regional_domain_name
     origin_id   = local.origin_id
 
@@ -173,6 +192,26 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     max_ttl                = 86400
   }
 
+  # Cache behavior for resize function
+  ordered_cache_behavior {
+    allowed_methods = ["GET", "HEAD"]
+    cached_methods = ["GET", "HEAD"]
+    path_pattern = "/resize/*"
+    target_origin_id = local.resize_function_origin_id
+
+    forwarded_values {
+      query_string = true
+
+      cookies {
+        forward = "none"
+      }
+    }
+
+    viewer_protocol_policy = "redirect-to-https"
+    min_ttl = 0
+    default_ttl = 86400
+    max_ttl = 31536000
+  }
 
   price_class = "PriceClass_100"
 
