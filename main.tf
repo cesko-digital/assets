@@ -26,12 +26,15 @@ resource "aws_s3_bucket" "bucket" {
 
   cors_rule {
     allowed_headers = [
-      "Authorization"]
+      "Authorization"
+    ]
     allowed_methods = [
       "GET",
-      "HEAD"]
+      "HEAD"
+    ]
     allowed_origins = [
-      "*"]
+      "*"
+    ]
     expose_headers  = []
     max_age_seconds = 3000
   }
@@ -43,21 +46,24 @@ resource "aws_s3_bucket" "automated_bucket" {
 
   cors_rule {
     allowed_headers = [
-      "Authorization"]
+      "Authorization"
+    ]
     allowed_methods = [
       "GET",
-      "HEAD"]
+      "HEAD"
+    ]
     allowed_origins = [
-      "*"]
+      "*"
+    ]
     expose_headers  = []
     max_age_seconds = 3000
   }
 }
 
 locals {
-  origin_id           = "S3-${aws_s3_bucket.bucket.id}"
-  automated_origin_id = "S3-${aws_s3_bucket.automated_bucket.id}"
-  group_origin_id     = "S3-cesko-digital-all-assets"
+  origin_id                 = "S3-${aws_s3_bucket.bucket.id}"
+  automated_origin_id       = "S3-${aws_s3_bucket.automated_bucket.id}"
+  group_origin_id           = "S3-cesko-digital-all-assets"
   resize_function_origin_id = "cesko-digital-resized-assets"
 }
 
@@ -67,11 +73,13 @@ resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
 data "aws_iam_policy_document" "distribution_policy" {
   statement {
     actions   = [
-      "s3:GetObject"]
+      "s3:GetObject"
+    ]
     principals {
       type        = "AWS"
       identifiers = [
-        aws_cloudfront_origin_access_identity.origin_access_identity.iam_arn]
+        aws_cloudfront_origin_access_identity.origin_access_identity.iam_arn
+      ]
     }
     resources = [
       "${aws_s3_bucket.bucket.arn}/*",
@@ -82,7 +90,8 @@ data "aws_iam_policy_document" "distribution_policy" {
 data "aws_iam_policy_document" "automated_distribution_policy" {
   statement {
     actions   = [
-      "s3:GetObject"]
+      "s3:GetObject"
+    ]
     principals {
       type        = "AWS"
       identifiers = [
@@ -114,7 +123,8 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
         403,
         404,
         500,
-        502]
+        502
+      ]
     }
 
     member {
@@ -127,15 +137,15 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   }
 
   origin {
-    origin_id = local.resize_function_origin_id
+    origin_id   = local.resize_function_origin_id
     domain_name = "https://cesko.digital"
-    origin_path = '/api/resize'
+    origin_path = "/api"
 
     custom_origin_config {
-      http_port = 80
-      https_port = 443
+      http_port              = 80
+      https_port             = 443
       origin_protocol_policy = "match-viewer"
-      origin_ssl_protocols = [
+      origin_ssl_protocols   = [
         "TLSv1",
         "TLSv1.1",
         "TLSv1.2",
@@ -167,15 +177,18 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   is_ipv6_enabled = true
 
   aliases = [
-    var.domain]
+    var.domain
+  ]
 
   default_cache_behavior {
     allowed_methods  = [
       "GET",
-      "HEAD"]
+      "HEAD"
+    ]
     cached_methods   = [
       "GET",
-      "HEAD"]
+      "HEAD"
+    ]
     target_origin_id = local.group_origin_id
 
     forwarded_values {
@@ -194,9 +207,9 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
 
   # Cache behavior for resize function
   ordered_cache_behavior {
-    allowed_methods = ["GET", "HEAD"]
-    cached_methods = ["GET", "HEAD"]
-    path_pattern = "/resize/*"
+    allowed_methods  = ["GET", "HEAD"]
+    cached_methods   = ["GET", "HEAD"]
+    path_pattern     = "/resize"
     target_origin_id = local.resize_function_origin_id
 
     forwarded_values {
@@ -208,9 +221,9 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     }
 
     viewer_protocol_policy = "redirect-to-https"
-    min_ttl = 0
-    default_ttl = 86400
-    max_ttl = 31536000
+    min_ttl                = 0
+    default_ttl            = 86400
+    max_ttl                = 31536000
   }
 
   price_class = "PriceClass_100"
@@ -227,9 +240,9 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   }
 
   custom_error_response {
-    error_code = 403
+    error_code            = 403
     error_caching_min_ttl = 10
-    response_page_path = "/index.html"
-    response_code = 404
+    response_page_path    = "/index.html"
+    response_code         = 404
   }
 }
