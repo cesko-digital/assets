@@ -138,7 +138,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
 
   origin {
     origin_id   = local.resize_function_origin_id
-    domain_name = "https://cesko.digital"
+    domain_name = "cesko.digital"
     origin_path = "/api"
 
     custom_origin_config {
