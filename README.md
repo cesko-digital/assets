@@ -14,6 +14,18 @@ Pro přidání nového souboru na [data.cesko.digital](https://data.cesko.digita
 
 Cesta k souboru kopíruje strukturu repozitáře, tedy soubor `content/prirucka.pdf` bude k dispozici na adrese `data.cesko.digital/prirucka.pdf`.
 
+## Přístup k náhledům obrázků
+
+Distribuce na [data.cesko.digital](https://data.cesko.digital) umožňuje vracet obrázky s jinou požadovanou šířkou.
+Stačí zavolat URL [https://data.cesko.digital/resize](https://data.cesko.digital/resize). 
+
+Funkce má následující query parametry:
+
+- `src` **povinný parametr -** relativní adresa k obrázku (origin je natvrdo nastaven na [data.cesko.digital](https://data.cesko.digital))
+- `width` **povinný parametr -** požadovaná výsledná šířka obrázku (poměr stran je zachován)
+
+Příklad výsledného volání: `https://data.cesko.digital/resize?src=/img/show-and-tell-1.png&width=500`
+
 ## Automatizovaná data
 
 Součástí definice infrastruktury je i bucket pro automatizovaná data jako je např. [derisking-handbook](https://github.com/cesko-digital/derisking-handbook).
