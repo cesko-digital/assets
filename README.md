@@ -6,10 +6,9 @@ Synchronizační repozitář pro soubory hostované na [data.cesko.digital](http
 
 Pro přidání nového souboru na [data.cesko.digital](https://data.cesko.digital) je nutné:
 
-1. Soubor nahrát do složky `content`
-2. Vytvořit krátkodobou větev a commit se souborem
-3. Push
-4. Vytvořit pull request a provést kontrolu (pull request by měl obsahovat změny pouze ve složce `content`, viz sekce _Změna infrastruktury_)
+1. Soubor nahrát do složky `content`(například pro obrázek na blog, jdi do složky "img" a dej "add a file" a "Upload files")
+2. Do "Commit changes" napiš název obrázku a dej "Commit changes"
+4. Vytvořit pull request a provést kontrolu pomocí přidání jednoho z reviwers Karmi, Zoul, Martin Wenish (pull request by měl obsahovat změny pouze ve složce `content`, viz sekce _Změna infrastruktury_)
 5. Merge
 
 Cesta k souboru kopíruje strukturu repozitáře, tedy soubor `content/prirucka.pdf` bude k dispozici na adrese `data.cesko.digital/prirucka.pdf`.
