@@ -7,9 +7,17 @@ Synchronizační repozitář pro soubory hostované na [data.cesko.digital](http
 Pro přidání nového souboru na [data.cesko.digital](https://data.cesko.digital) je nutné:
 
 1. Soubor nahrát do složky `content`(například pro obrázek na blog, jdi do složky "img" a dej "add a file" a "Upload files")
-2. Do "Commit changes" napiš název obrázku a dej "Commit changes"
-4. Vytvořit pull request a provést kontrolu pomocí přidání jednoho z reviwers Karmi, Zoul, Martin Wenish (pull request by měl obsahovat změny pouze ve složce `content`, viz sekce _Změna infrastruktury_)
-5. Merge
+<img width="389" alt="obrazek" src="https://user-images.githubusercontent.com/69157075/146148296-cf861ffd-2d75-4139-8092-316fd96b68ab.png">
+
+3. Do "Commit changes" napiš název obrázku a dej "Commit changes"
+<img width="336" alt="obrazek" src="https://user-images.githubusercontent.com/69157075/146148465-1f7f74b8-d809-4871-bbec-91675d3d3c1f.png">
+
+5. Vytvořit pull request a proveď kontrolu pomocí přidání jednoho z reviwers Karmi, Zoul, Martin Wenish (pull request by měl obsahovat změny pouze ve složce `content`, viz sekce _Změna infrastruktury_)
+<img width="467" alt="obrazek" src="https://user-images.githubusercontent.com/69157075/146148552-88804683-7aef-4266-bc72-1d2be19a5f40.png">
+
+7. jakmile bude pull request schválen (přijde Ti to emailem), klikni na zelené tlačítko v pull requestu "Rebase and Merge"
+<img width="559" alt="obrazek" src="https://user-images.githubusercontent.com/69157075/146148636-7d591e45-041d-4065-9179-73b4502f7457.png">
+
 
 Cesta k souboru kopíruje strukturu repozitáře, tedy soubor `content/prirucka.pdf` bude k dispozici na adrese `data.cesko.digital/prirucka.pdf`.
 
