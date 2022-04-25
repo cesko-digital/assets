@@ -1,32 +1,17 @@
-variable domain {
-  type = string
-}
-
-
-variable "ssl_certificate_arn" {
-  type = string
-}
-
-
-provider "aws" {
-  region = "eu-central-1"
-}
-
-terraform {
-  backend "s3" {
-    bucket = "cd-assets-terraform-backend"
-    key    = "terraform.tfstate"
-    region = "eu-central-1"
-  }
-}
-
 resource "aws_s3_bucket" "bucket" {
-  bucket = "data-cesko-digital-manual"
+  bucket = var.manual-bucket-name
+}
+
+resource "aws_s3_bucket_acl" "bucket" {
+  bucket = aws_s3_bucket.bucket.id
   acl    = "private"
+}
+
+resource "aws_s3_bucket_cors_configuration" "bucket" {
+  bucket = aws_s3_bucket.bucket.id
 
   cors_rule {
     allowed_headers = [
-      "Authorization"
     ]
     allowed_methods = [
       "GET",
@@ -41,12 +26,19 @@ resource "aws_s3_bucket" "bucket" {
 }
 
 resource "aws_s3_bucket" "automated_bucket" {
-  bucket = "data-cesko-digital"
+  bucket = var.automated-bucket-name
+}
+
+resource "aws_s3_bucket_acl" "automated_bucket" {
+  bucket = aws_s3_bucket.automated_bucket.id
   acl    = "private"
+}
+
+resource "aws_s3_bucket_cors_configuration" "automated_bucket" {
+  bucket = aws_s3_bucket.automated_bucket.id
 
   cors_rule {
     allowed_headers = [
-      "Authorization"
     ]
     allowed_methods = [
       "GET",
@@ -72,7 +64,7 @@ resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
 
 data "aws_iam_policy_document" "distribution_policy" {
   statement {
-    actions   = [
+    actions = [
       "s3:GetObject"
     ]
     principals {
@@ -89,7 +81,7 @@ data "aws_iam_policy_document" "distribution_policy" {
 
 data "aws_iam_policy_document" "automated_distribution_policy" {
   statement {
-    actions   = [
+    actions = [
       "s3:GetObject"
     ]
     principals {
@@ -181,11 +173,11 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   ]
 
   default_cache_behavior {
-    allowed_methods  = [
+    allowed_methods = [
       "GET",
       "HEAD"
     ]
-    cached_methods   = [
+    cached_methods = [
       "GET",
       "HEAD"
     ]

@@ -1,0 +1,5 @@
+aws-region = "eu-central-1"
+domain = "data2.cesko.digital"
+ssl_certificate_arn = "arn:aws:acm:us-east-1:668684805333:certificate/7344bd1c-42bc-4986-9c8b-bae4e8d8768a"
+manual-bucket-name = "cesko-digital-data-manual"
+automated-bucket-name = "cesko-digital-data-automated"
